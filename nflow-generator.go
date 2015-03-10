@@ -1,3 +1,10 @@
+// using for testing flow metrics for stats analysis
+// also handy for integration testing
+// Run using:
+// go run nflow-generator.go nflow_logging.go nflow_payload.go  -t 172.16.86.138 -p 9995
+// Or:
+// go build
+// ./nflow-generator -t <ip> -p <port>
 package main
 
 import (
@@ -9,11 +16,6 @@ import (
 	"time"
 )
 
-// Run using:
-// go run nflow-generator.go nflow_logging.go nflow-payload.go  -t 172.16.86.138 -p 9995
-// Or:
-// go build
-// ./nflow-generator -t <ip> -p <port>
 func main() {
 	var opts struct {
 		CollectorIP   string `short:"t" long:"target" description:"target ip address of the netflow collector"`
@@ -48,7 +50,7 @@ func main() {
 	for {
 		rand.Seed(time.Now().Unix())
 		n := randomNum(50, 1000)
-		data := GenerateNetflow(14)
+		data := GenerateNetflow(15)
 		buffer := BuildNFlowPayload(data)
 		_, err := conn.Write(buffer.Bytes())
 		if err != nil {

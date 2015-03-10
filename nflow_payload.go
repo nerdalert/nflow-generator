@@ -21,6 +21,8 @@ const (
 	P2P_PORT        = 6681
 	BITTORRENT_PORT = 6682
 	UINT16_MAX      = 65535
+	PAYLOAD_AVG_MD  = 512
+	PAYLOAD_AVG_SM  = 256
 )
 
 // struct data from fach
@@ -123,8 +125,32 @@ func CreateNFlowPayload(recordCount int) []NetflowPayload {
 		payload[11] = CreateBitorrentFlow()
 		payload[12] = CreateFTPFlow()
 		payload[13] = CreateSnmpFlow()
+		payload[14] = CreateIcmpFlow()
 	}
 	return payload
+}
+
+//Initialize netflow record with random data
+func CreateIcmpFlow() NetflowPayload {
+	payload := new(NetflowPayload)
+	payload.SrcIP = IPtoUint32("172.16.50.10")
+	payload.DstIP = IPtoUint32("132.12.130.10")
+	payload.NextHopIP = IPtoUint32("132.12.130.1")
+	payload.SrcPort = 0
+	payload.DstPort = 0
+	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
+	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_SM)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_SM)
+	payload.SysUptimeStart = rand.Uint32()
+	payload.SysUptimeEnd = rand.Uint32()
+	payload.Padding1 = 0
+	payload.IpProtocol = 1
+	payload.IpTos = 0
+	payload.SrcPrefixMask = uint8(rand.Intn(32))
+	payload.DstPrefixMask = uint8(rand.Intn(32))
+	payload.Padding2 = 0
+	return *payload
 }
 
 //Initialize netflow record with random data
@@ -137,8 +163,8 @@ func CreateHttpFlow() NetflowPayload {
 	payload.DstPort = uint16(HTTP_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -160,8 +186,8 @@ func CreateSnmpFlow() NetflowPayload {
 	payload.DstPort = uint16(SNMP_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -182,8 +208,8 @@ func CreateFTPFlow() NetflowPayload {
 	payload.DstPort = uint16(FTP_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -204,8 +230,8 @@ func CreateNtpFlow() NetflowPayload {
 	payload.DstPort = uint16(NTP_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -227,8 +253,8 @@ func CreateP2pFlow() NetflowPayload {
 	payload.DstPort = uint16(P2P_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -252,8 +278,8 @@ func CreateBitorrentFlow() NetflowPayload {
 	payload.DstPort = uint16(BITTORRENT_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -277,8 +303,8 @@ func CreateSshFlow() NetflowPayload {
 	payload.DstPort = uint16(SSH_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -302,8 +328,8 @@ func CreateHttpsFlow() NetflowPayload {
 	payload.DstPort = uint16(HTTPS_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -327,8 +353,8 @@ func CreateHttpAltFlow() NetflowPayload {
 	payload.DstPort = uint16(HTTPS_ALT_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -352,8 +378,8 @@ func CreateDnsAltFlow() NetflowPayload {
 	payload.DstPort = uint16(DNS_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -377,8 +403,8 @@ func CreateImapsFlow() NetflowPayload {
 	payload.DstPort = uint16(IPMAPS_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -402,8 +428,8 @@ func CreateMySqlFlow() NetflowPayload {
 	payload.DstPort = uint16(MYSQL_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.Padding1 = 0
@@ -425,8 +451,8 @@ func CreateRandomFlow() NetflowPayload {
 	payload.NextHopIP = rand.Uint32()
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
-	payload.NumPackets = rand.Uint32()
-	payload.NumOctets = rand.Uint32()
+	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
+	payload.NumOctets = genRandUint32(PAYLOAD_AVG_MD)
 	payload.SysUptimeStart = rand.Uint32()
 	payload.SysUptimeEnd = rand.Uint32()
 	payload.SrcPort = genRandUint16(UINT16_MAX)
@@ -449,4 +475,8 @@ func genRandUint16(max int) uint16 {
 func IPtoUint32(s string) uint32 {
 	ip := net.ParseIP(s)
 	return binary.BigEndian.Uint32(ip.To4())
+}
+
+func genRandUint32(max int) uint32 {
+	return uint32(rand.Intn(max))
 }
