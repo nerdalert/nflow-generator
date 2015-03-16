@@ -15,13 +15,13 @@ const (
 	HTTPS_PORT      = 443
 	NTP_PORT        = 123
 	SNMP_PORT       = 161
-	IPMAPS_PORT     = 993
+	IMAPS_PORT      = 993
 	MYSQL_PORT      = 3306
 	HTTPS_ALT_PORT  = 8080
 	P2P_PORT        = 6681
 	BITTORRENT_PORT = 6682
 	UINT16_MAX      = 65535
-	PAYLOAD_AVG_MD  = 512
+	PAYLOAD_AVG_MD  = 1024
 	PAYLOAD_AVG_SM  = 256
 )
 
@@ -87,7 +87,13 @@ func BuildNFlowPayload(data Netflow) bytes.Buffer {
 func GenerateNetflow(recordCount int) Netflow {
 	data := new(Netflow)
 	header := CreateNFlowHeader(recordCount)
-	records := CreateNFlowPayload(recordCount)
+	records := []NetflowPayload{}
+	if recordCount == 8 {
+		// overwrite payload to add some variations for traffic spikes.
+		records = CreateVariablePayload(recordCount)
+	} else {
+		records = CreateNFlowPayload(recordCount)
+	}
 
 	data.Header = header
 	data.Records = records
@@ -96,6 +102,7 @@ func GenerateNetflow(recordCount int) Netflow {
 
 //Generate and initialize netflow header
 func CreateNFlowHeader(recordCount int) NetflowHeader {
+
 	h := new(NetflowHeader)
 	h.Version = 5
 	h.FlowCount = uint16(recordCount)
@@ -109,13 +116,29 @@ func CreateNFlowHeader(recordCount int) NetflowHeader {
 	return *h
 }
 
+func CreateVariablePayload(recordCount int) []NetflowPayload {
+	payload := make([]NetflowPayload, recordCount)
+
+	for i := 0; i < recordCount; i++ {
+		payload[0] = CreateHttpFlow()
+		payload[1] = CreateHttpsFlow()
+		payload[2] = CreateHttpAltFlow()
+		payload[3] = CreateDnsFlow()
+		payload[5] = CreateNtpFlow()
+		payload[6] = CreateImapsFlow()
+		payload[7] = CreateMySqlFlow()
+	}
+
+	return payload
+}
+
 func CreateNFlowPayload(recordCount int) []NetflowPayload {
 	payload := make([]NetflowPayload, recordCount)
 	for i := 0; i < recordCount; i++ {
 		payload[0] = CreateHttpFlow()
 		payload[1] = CreateHttpsFlow()
 		payload[2] = CreateHttpAltFlow()
-		payload[3] = CreateDnsAltFlow()
+		payload[3] = CreateDnsFlow()
 		payload[5] = CreateNtpFlow()
 		payload[6] = CreateImapsFlow()
 		payload[7] = CreateMySqlFlow()
@@ -126,6 +149,7 @@ func CreateNFlowPayload(recordCount int) []NetflowPayload {
 		payload[12] = CreateFTPFlow()
 		payload[13] = CreateSnmpFlow()
 		payload[14] = CreateIcmpFlow()
+		payload[14] = CreateRandomFlow()
 	}
 	return payload
 }
@@ -368,7 +392,7 @@ func CreateHttpAltFlow() NetflowPayload {
 	return *payload
 }
 
-func CreateDnsAltFlow() NetflowPayload {
+func CreateDnsFlow() NetflowPayload {
 	payload := new(NetflowPayload)
 
 	payload.SrcIP = IPtoUint32("59.220.158.122")
@@ -400,7 +424,7 @@ func CreateImapsFlow() NetflowPayload {
 	payload.DstIP = IPtoUint32("62.12.190.10")
 	payload.NextHopIP = IPtoUint32("131.199.15.1")
 	payload.SrcPort = uint16(9010)
-	payload.DstPort = uint16(IPMAPS_PORT)
+	payload.DstPort = uint16(IMAPS_PORT)
 	payload.SnmpInIndex = genRandUint16(UINT16_MAX)
 	payload.SnmpOutIndex = genRandUint16(UINT16_MAX)
 	payload.NumPackets = genRandUint32(PAYLOAD_AVG_MD)
