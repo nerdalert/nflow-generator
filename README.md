@@ -1,5 +1,19 @@
 ## Usage
 
+### Docker Image Run (Easiest)
+
+Simply run in a container and pass any arguments at runtime. Below is an example passing the `--help` flag:
+
+```
+docker run -it --rm networkstatic/nflow_generator --help
+```
+
+To generate mock flow data simply add the target IP and port:
+
+```
+docker run -it --rm networkstatic/nflow_generator -t <ip> -p <port>
+```
+
 ### Build
 
 Install [Go](http://golang.org/doc/install)
