@@ -5,7 +5,17 @@ import (
 	"encoding/binary"
 	"math/rand"
 	"net"
+	"time"
 )
+
+// Start time for this instance, used to compute sysUptime
+var StartTime = time.Now().UnixNano()
+
+// current sysUptime in msec - recalculated in CreateNFlowHeader()
+var sysUptime uint32 = 0
+
+// Counter of flow packets that have been sent
+var flowSequence uint32 = 0
 
 const (
 	FTP_PORT        = 21
@@ -103,13 +113,23 @@ func GenerateNetflow(recordCount int) Netflow {
 //Generate and initialize netflow header
 func CreateNFlowHeader(recordCount int) NetflowHeader {
 
+	t := time.Now().UnixNano()
+	sec := t / int64(time.Second)
+	nsec := t - sec*int64(time.Second)
+	sysUptime = uint32((t-StartTime) / int64(time.Millisecond))
+	flowSequence++
+
+	// log.Infof("Time: %d; Seconds: %d; Nanoseconds: %d\n", t, sec, nsec)
+	// log.Infof("StartTime: %d; sysUptime: %d", StartTime, sysUptime)
+	// log.Infof("FlowSequence %d", flowSequence)
+
 	h := new(NetflowHeader)
 	h.Version = 5
 	h.FlowCount = uint16(recordCount)
-	h.SysUptime = 0
-	h.UnixSec = 0
-	h.UnixMsec = 0
-	h.FlowSequence = 0
+	h.SysUptime = sysUptime
+	h.UnixSec = uint32(sec)
+	h.UnixMsec = uint32(nsec)
+	h.FlowSequence = flowSequence
 	h.EngineType = 1
 	h.EngineId = 0
 	h.SampleInterval = 0
