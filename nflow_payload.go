@@ -116,7 +116,7 @@ func CreateNFlowHeader(recordCount int) NetflowHeader {
 	t := time.Now().UnixNano()
 	sec := t / int64(time.Second)
 	nsec := t - sec*int64(time.Second)
-	sysUptime = uint32((t-StartTime) / int64(time.Millisecond))
+	sysUptime = uint32((t-StartTime) / int64(time.Millisecond))+1000
 	flowSequence++
 
 	// log.Infof("Time: %d; Seconds: %d; Nanoseconds: %d\n", t, sec, nsec)
@@ -194,6 +194,7 @@ func CreateIcmpFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(rand.Intn(32))
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -217,6 +218,7 @@ func CreateHttpFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(rand.Intn(32))
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -240,6 +242,7 @@ func CreateSnmpFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(rand.Intn(32))
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -262,6 +265,7 @@ func CreateFTPFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(rand.Intn(32))
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -285,6 +289,7 @@ func CreateNtpFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(32)
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -309,6 +314,7 @@ func CreateP2pFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(32)
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -334,6 +340,7 @@ func CreateBitorrentFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(32)
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -359,6 +366,7 @@ func CreateSshFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(rand.Intn(32))
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -384,6 +392,7 @@ func CreateHttpsFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(rand.Intn(32))
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -409,6 +418,7 @@ func CreateHttpAltFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(rand.Intn(32))
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -434,6 +444,7 @@ func CreateDnsFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(rand.Intn(32))
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -459,6 +470,7 @@ func CreateImapsFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(rand.Intn(32))
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -484,6 +496,7 @@ func CreateMySqlFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(rand.Intn(32))
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
 	return *payload
 }
 
@@ -509,6 +522,27 @@ func CreateRandomFlow() NetflowPayload {
 	payload.SrcPrefixMask = uint8(rand.Intn(32))
 	payload.DstPrefixMask = uint8(rand.Intn(32))
 	payload.Padding2 = 0
+	FixIFTimes(payload)
+	return *payload
+}
+
+// patch up the SnmpInIndex and SnmpOutIndex, and the start/end times for the flows
+func FixIFTimes(payload *NetflowPayload) NetflowPayload {
+
+	if payload.SrcIP > payload.DstIP {
+		payload.SnmpInIndex = 1
+		payload.SnmpOutIndex = 2
+	} else {
+		payload.SnmpInIndex = 2
+		payload.SnmpOutIndex = 1
+	}
+	uptime := int(sysUptime)
+	payload.SysUptimeEnd = uint32(uptime - randomNum(10,500))
+	payload.SysUptimeStart = payload.SysUptimeEnd - uint32(randomNum(10,500))
+
+	// log.Infof("S&D : %x %x %d, %d", payload.SrcIP, payload.DstIP, payload.DstPort, payload.SnmpInIndex)
+	// log.Infof("Time: %d %d %d", sysUptime, payload.SysUptimeStart, payload.SysUptimeEnd)
+
 	return *payload
 }
 
