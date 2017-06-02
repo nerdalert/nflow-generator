@@ -35,7 +35,8 @@ var opts struct {
 	CollectorIP   string `short:"t" long:"target" description:"target ip address of the netflow collector"`
 	CollectorPort string `short:"p" long:"port" description:"port number of the target netflow collector"`
 	SpikeProto    string `short:"s" long:"spike" description:"run a second thread generating a spike for the specified protocol"`
-	Help          bool   `short:"h" long:"help" description:"show nflow-generator help"`
+    FalseIndex    bool   `short:"f" long:"false-index" description:"generate false SNMP interface indexes, otherwise set to 0"`
+    Help          bool   `short:"h" long:"help" description:"show nflow-generator help"`
 }
 
 func main() {
@@ -107,6 +108,9 @@ func showUsage() {
 Usage:
   main [OPTIONS] [collector IP address] [collector port number]
 
+  Send mock Netflow version 5 data to designated collector IP & port.
+  Time stamps in all datagrams are set to UTC.
+
 Application Options:
   -t, --target= target ip address of the netflow collector
   -p, --port=   port number of the target netflow collector
@@ -124,13 +128,22 @@ Application Options:
         https_alt - generates tcp/8080
         p2p - generates udp/6681
         bittorrent - generates udp/6682
+  -f, --false-index generate false snmp index values of 1 or 2: If the source address > dest address, input interface is set to 1, and set to 2 otherwise,
+and the output interface is set to the opposite value. Default in and out interface is 0. (Optional)
 
-Example:
-    -generate default flows:
-    ./nflow-generator.go -t 172.16.86.138 -p 9995
+Example Usage:
+
+    -first build from source (one time)
+    go build   
+
+    -generate default flows to device 172.16.86.138, port 9995
+    ./nflow-generator -t 172.16.86.138 -p 9995 
 
     -generate default flows along with a spike in the specified protocol:
     ./nflow-generator -t 172.16.86.138 -p 9995 -s ssh
+
+    -generate default flows with "false index" settings for snmp interfaces 
+    ./nflow-generator -t 172.16.86.138 -p 9995 -f
 
 Help Options:
   -h, --help    Show this help message
