@@ -61,7 +61,7 @@ func main() {
 	}
 	conn, err := net.DialUDP("udp", nil, udpAddr)
 	if err != nil {
-		log.Fatal("Error connectiong to the target collector: ", err)
+		log.Fatal("Error connecting to the target collector: ", err)
 	}
 	log.Infof("sending netflow data to a collector ip: %s and port: %s. \n"+
 		"Use ctrl^c to terminate the app.", opts.CollectorIP, opts.CollectorPort)
@@ -78,14 +78,14 @@ func main() {
 			buffer := BuildNFlowPayload(data)
 			_, err := conn.Write(buffer.Bytes())
 			if err != nil {
-				log.Fatal("Error connectiong to the target collector: ", err)
+				log.Fatal("Error connecting to the target collector: ", err)
 			}
 		} else {
 			data := GenerateNetflow(16)
 			buffer := BuildNFlowPayload(data)
 			_, err := conn.Write(buffer.Bytes())
 			if err != nil {
-				log.Fatal("Error connectiong to the target collector: ", err)
+				log.Fatal("Error connecting to the target collector: ", err)
 			}
 		}
 		// add some periodic spike data
