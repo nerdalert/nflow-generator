@@ -36,7 +36,7 @@ Feed it the target collector and port, and optional "false-index" flag:
 
 	./nflow-generator -t <ip> -p <port> [ -f | --false-index ]
 
-### Test
+### Run a Test Collection
 
 You can run a simple test collection using nfcapd from the nfdump package with the following.
 
