@@ -115,11 +115,13 @@ Flow Record:
 
 ```
 
-### Update - May 2017
+### Notes
 
 The original mock netflow generator placed random values in several fields which confused 
 certain netflow collectors that complained about inaccurate time stamps, 
-and were confused by the random values sent in the input and output interface fields. This update:
+and were confused by the random values sent in the input and output interface fields. 
+
+Changes:
 
 * Sets the `SysUptime`, `unix_secs`, and `unix_nsecs` fields of the Netflow datagrams to sensible (UTC) values
 * Generates a unique `flow_sequence` value for each netflow datagram
