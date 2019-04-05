@@ -20,6 +20,9 @@ To generate mock flow data simply add the target IP and port:
 docker run -it --rm networkstatic/nflow-generator -t <ip> -p <port>
 ```
 
+### Download the binary
+
+You can download the Linux binary here [nflow-generator-x86_64-linux](https://github.com/nerdalert/nflow-generator/blob/master/binaries/nflow-generator-x86_64-linux).
 ### Build
 
 Install [Go](http://golang.org/doc/install), then:
