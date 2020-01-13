@@ -128,8 +128,7 @@ Application Options:
         https_alt - generates tcp/8080
         p2p - generates udp/6681
         bittorrent - generates udp/6682
-  -f, --false-index generate false snmp index values of 1 or 2: If the source address > dest address, input interface is set to 1, and set to 2 otherwise,
-and the output interface is set to the opposite value. Default in and out interface is 0. (Optional)
+  -f, --false-index generate a false snmp index values of 1 or 2. The default is 0. (Optional)
 
 Example Usage:
 
