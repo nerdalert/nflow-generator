@@ -36,6 +36,7 @@ var opts struct {
 	CollectorPort string `short:"p" long:"port" description:"port number of the target netflow collector"`
 	SpikeProto    string `short:"s" long:"spike" description:"run a second thread generating a spike for the specified protocol"`
     FalseIndex    bool   `short:"f" long:"false-index" description:"generate false SNMP interface indexes, otherwise set to 0"`
+    FlowCount     int    `short:"c" long:"flow-count" description:"set the number of flows to generate in each iteration" default:"16" max:"128" min:"8"`
     Help          bool   `short:"h" long:"help" description:"show nflow-generator help"`
 }
 
@@ -81,7 +82,7 @@ func main() {
 				log.Fatal("Error connecting to the target collector: ", err)
 			}
 		} else {
-			data := GenerateNetflow(16)
+			data := GenerateNetflow(opts.FlowCount)
 			buffer := BuildNFlowPayload(data)
 			_, err := conn.Write(buffer.Bytes())
 			if err != nil {
@@ -129,6 +130,7 @@ Application Options:
         p2p - generates udp/6681
         bittorrent - generates udp/6682
   -f, --false-index generate a false snmp index values of 1 or 2. The default is 0. (Optional)
+  -c, --flow-count set the number of flows to generate in each iteration. The default is 16. (Optional)
 
 Example Usage:
 
@@ -143,6 +145,9 @@ Example Usage:
 
     -generate default flows with "false index" settings for snmp interfaces 
     ./nflow-generator -t 172.16.86.138 -p 9995 -f
+
+    -generate default flows with up to 256 flows
+    ./nflow-generator -c 128 -t 172.16.86.138 -p 9995
 
 Help Options:
   -h, --help    Show this help message
