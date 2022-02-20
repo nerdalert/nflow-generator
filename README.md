@@ -12,12 +12,16 @@ Simply run in a container and pass any arguments at runtime. Below is an example
 
 ```
 docker run -it --rm networkstatic/nflow-generator --help
+# or podman/quay repos
+podman run -it --rm /quay.io/networkstatic/nflow-generator --help
 ```
 
 To generate mock flow data simply add the target IP and port:
 
 ```
 docker run -it --rm networkstatic/nflow-generator -t <ip> -p <port>
+# or podman/quay repos
+podman run -it --rm /quay.io/networkstatic/nflow-generator -t <ip> -p <port>
 ```
 
 ### Download the binary
@@ -28,7 +32,7 @@ You can download the Linux binary here [nflow-generator-x86_64-linux](https://gi
 Install [Go](http://golang.org/doc/install), then:
 
 	git clone https://github.com/nerdalert/nflow-generator.git 
-	cd <dir>
+	cd nflow-generator
 	go build
 
 Go build will leave a binary in the root directory that can be run.
