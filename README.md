@@ -1,5 +1,7 @@
 # Usage - nflow-generator
 
+[![nflow-generator image CI](https://github.com/nerdalert/nflow-generator/actions/workflows/image-build.yml/badge.svg)](https://github.com/nerdalert/nflow-generator/actions/workflows/image-build.yml)
+
 This program generates mock netflow (v5) data that can be used to test netflow collector programs. 
 The program simulates a router that is exporting flow records to the collector.
 It is useful for determining whether the netflow collector is operating and/or receiving netflow datagrams.
