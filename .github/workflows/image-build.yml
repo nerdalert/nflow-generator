@@ -2,9 +2,12 @@ name: nflow-generator image CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * *'  # daily at midnight
+  workflow_dispatch:
 
 jobs:
 
