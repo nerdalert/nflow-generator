@@ -1,11 +1,10 @@
-FROM golang
+FROM golang:alpine as build
+COPY . /src
+WORKDIR /src
+RUN go build -v .
 
+FROM alpine:latest
 MAINTAINER Brent Salisbury <brent.salisbury@gmail.com>
 
-ADD . /go/src/github.com/nerdalert/nflow-generator
-
-WORKDIR /etc/nflow
-COPY . .
-RUN go build .
-
-ENTRYPOINT ["/etc/nflow/nflow-generator"]
+COPY --from=build /src/nflow-generator /usr/local/bin/
+ENTRYPOINT ["/usr/local/bin/nflow-generator"]
